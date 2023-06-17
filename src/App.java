@@ -9,9 +9,6 @@ public class App {
                 "C:\\Users\\Leo\\Documents\\ALEST\\TrabalhoFinalALEST\\src\\dataEditado.csv");
 
         leituraArquivo.realizarLeitura();
-        // System.out.println("Entradas únicas na lista: " +
-        // listaLogradouro.getQuantidade());
-        System.out.println(listaLogradouro.buscar("ipiranga").getListaSinalizacao().inicio.getDataImplantacao());
 
         Menu: while (true) {
             System.out.println("1 - Logradouro com mais sinalizações registradas.");
@@ -32,9 +29,9 @@ public class App {
                             nomeLogradouro = i.getTipo() + " " + i.getNome();
                         }
                     }
+                    System.out.println();
                     System.out.println("Logradouro com mais sinalizações registradas: " + nomeLogradouro);
                     System.out.println();
-                    scanner.close();
                     break;
                 case 2:
                     LocalDate aux = LocalDate.MIN;
@@ -60,8 +57,49 @@ public class App {
                 case 3:
                     int indexador = 1;
                     int total = listaLogradouro.getQuantidade();
-                    System.out.println("Item " + indexador + " de " + total);
-                    System.out.println(listaLogradouro.inicio.getProximo());
+                    LocalDate maisAntigo = LocalDate.MIN;
+                    LocalDate maisRecente = LocalDate.MAX;
+                    loop: for (Logradouro i = listaLogradouro.inicio.getProximo(); i != null;) {
+                        System.out.println("Item " + indexador + " de " + total);
+                        System.out.println(i.toString());
+                        System.out.println("Total de Sinalizações: " + i.getListaSinalizacao().getQuantidade());
+                        for (Sinalizacao j = i.getListaSinalizacao().inicio; j != null; j = j.getProximo()) {
+                            if (j.getDataImplantacao().isAfter(maisAntigo)) {
+                                maisAntigo = j.getDataImplantacao();
+                            }
+                            if (j.getDataImplantacao().isBefore(maisRecente)) {
+                                maisRecente = j.getDataImplantacao();
+                            }
+                        }
+                        System.out.println("Data mais antiga: " + maisAntigo);
+                        System.out.println("Data mais recente: " + maisRecente);
+                        System.out.println("1 - Anterior \t 2 - Próximo \t 3 - Sair");
+                        System.out.println();
+                        int seletor = scanner.nextInt();
+                        switch (seletor) {
+                            case 1:
+                                if (indexador == 1) {
+                                    System.out.println("Não há logradouros anteriores");
+                                    break;
+                                }
+                                i = i.getAnterior();
+                                indexador--;
+                                break;
+                            case 2:
+                                if (indexador == total) {
+                                    System.out.println("Não há logradouros posteriores");
+                                    break;
+                                }
+                                i = i.getProximo();
+                                indexador++;
+                                break;
+                            case 3:
+                                break loop;
+                            default:
+                                System.out.println("Opção inválida");
+                                break;
+                        }
+                    }
 
                     break;
                 case 4:
