@@ -8,6 +8,7 @@ public class Logradouro {
     public Logradouro(String tipo, String nome) {
         this.tipo = tipo;
         this.nome = nome;
+        this.listaSinalizacao = new ListaSinalizacao();
     }
 
     public String getTipo() {
@@ -32,6 +33,19 @@ public class Logradouro {
 
     public void setProximo(Logradouro proximo) {
         this.proximo = proximo;
+    }
+
+    public void inserirSinalizacao(Sinalizacao sinalizacao) {
+        this.listaSinalizacao.inserir(sinalizacao);
+    }
+
+    public ListaSinalizacao getListaSinalizacao() {
+        return listaSinalizacao;
+    }
+
+    @Override
+    public String toString() {
+        return tipo + " " + nome;
     }
 
 }

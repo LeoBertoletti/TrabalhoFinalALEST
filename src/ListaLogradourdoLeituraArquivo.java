@@ -1,15 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+// import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class ListaLogradourdoLeituraArquivo {
-    private ListaLogradouro listaLogradouro;
+    private ListaLogradouros listaLogradouro;
     private String caminhoArquivo;
 
-    public ListaLogradourdoLeituraArquivo(ListaLogradouro listaLogradouro, String caminhoArquivo) {
+    public ListaLogradourdoLeituraArquivo(ListaLogradouros listaLogradouro, String caminhoArquivo) {
         this.listaLogradouro = listaLogradouro;
         this.caminhoArquivo = caminhoArquivo;
 
@@ -17,7 +17,7 @@ public class ListaLogradourdoLeituraArquivo {
 
     public void realizarLeitura() {
         File arquivoCSV = new File(caminhoArquivo);
-        int linhasLidas = 0;
+        // int linhasLidas = 0;
         try {
             Scanner leitor = new Scanner(arquivoCSV);
             leitor.nextLine(); // pula primeira linha
@@ -25,39 +25,41 @@ public class ListaLogradourdoLeituraArquivo {
                 String linha = leitor.nextLine();
                 String[] colunas = linha.split(";");
                 processarLinha(colunas);
-                linhasLidas++;
+                // linhasLidas++;
             }
+            leitor.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(linhasLidas);
+        // System.out.println("Linhas lidas: " + linhasLidas);
     }
 
     private void processarLinha(String[] colunas) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime dateTime = LocalDateTime.parse(colunas[0], formatter);
-        int anoDataExtracao = dateTime.getYear();
-        int mesDataExtracao = dateTime.getMonthValue();
-        int diaDataExtracao = dateTime.getDayOfMonth();
-        int horaDataExtracao = dateTime.getHour();
-        int minDataExtracao = dateTime.getMinute();
+        // LocalDateTime dateTime = LocalDateTime.parse(colunas[0], formatter);
+        // int anoDataExtracao = dateTime.getYear();
+        // int mesDataExtracao = dateTime.getMonthValue();
+        // int diaDataExtracao = dateTime.getDayOfMonth();
+        // int horaDataExtracao = dateTime.getHour();
+        // int minDataExtracao = dateTime.getMinute();
 
         String descricao = colunas[1];
         String estado = colunas[2];
         String complemento = colunas[3];
 
-        int anoImplantacao = 0;
-        int mesImplantacao = 0;
-        int diaImplantacao = 0;
+        // int anoImplantacao = 0;
+        // int mesImplantacao = 0;
+        // int diaImplantacao = 0;
+        LocalDate dataImplantacao = null;
         if (!colunas[4].equals("")) {
             if (colunas[4].contains("-"))
                 formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             else
                 formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate date = LocalDate.parse(colunas[4], formatter);
-            anoImplantacao = date.getYear();
-            mesImplantacao = date.getMonthValue();
-            diaImplantacao = date.getDayOfMonth();
+            dataImplantacao = LocalDate.parse(colunas[4], formatter);
+            // anoImplantacao = date.getYear();
+            // mesImplantacao = date.getMonthValue();
+            // diaImplantacao = date.getDayOfMonth();
         }
         String logradouroTipo = colunas[5].split(" ", 2)[0];
         String logradouroNome = colunas[5].split(" ", 2)[1];
@@ -83,8 +85,10 @@ public class ListaLogradourdoLeituraArquivo {
         String localInstalacao = "";
         if (colunas.length >= 13)
             localInstalacao = colunas[12];
-
+        Sinalizacao sinalizacao = new Sinalizacao(descricao, estado, complemento, dataImplantacao, numInicial, numFinal,
+                defronte, cruzamento, lado, fluxo, localInstalacao);
         Logradouro logradouro = new Logradouro(logradouroTipo, logradouroNome);
-        listaLogradouro.atualizar(logradouro);
+        listaLogradouro.inserir(logradouro);
+        listaLogradouro.buscar(logradouroNome).inserirSinalizacao(sinalizacao);
     }
 }
